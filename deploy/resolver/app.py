@@ -430,6 +430,25 @@ def _pipe(url: str, audio: bool, quality: Optional[str]):
     cmd.append(url)
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     try:
+
+
+          # [FFmpeg লাইভ ওয়াটারমার্ক ডিলোগো ফিল্টার পাইপলাইন]
+    if "tiktok.com" in url or "capcut.com" in url:
+        ff_cmd = ["ffmpeg", "-i", "pipe:0", "-vf", "delogo=x=15:y=15:w=130:h=65", "-f", "mp4", "-movflags", "frag_keyframe+empty_moov", "pipe:1"]
+        ff_proc = subprocess.Popen(ff_cmd, stdin=proc.stdout, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        try:
+            while True:
+                chunk = ff_proc.stdout.read(65536)
+                if not chunk:
+                    break
+                yield chunk
+        finally:
+            ff_proc.stdout.close()
+            ff_proc.kill()
+            proc.kill()
+        return
+
+      
         while True:
             chunk = proc.stdout.read(65536)
             if not chunk:
