@@ -3,3 +3,4 @@ fastapi
 uvicorn[standard]
 requests
 curl_cffi
+ffmpeg-python
