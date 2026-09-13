@@ -1,7 +1,19 @@
-# Render Blueprint for the generic media resolver (deploy/resolver).
-# One-click: Render dashboard → New + → Blueprint → pick this repo → Apply.
-# Free plan, no credit card. RENDER_EXTERNAL_URL is injected automatically.
 services:
+  # Main Social Downloader website
+  - type: web
+    name: socialdownloader
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && corepack prepare pnpm@11.5.3 --activate && pnpm install --frozen-lockfile && pnpm run build
+    startCommand: pnpm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://socialdownloader.space
+
+  # Self-hosted yt-dlp media resolver
   - type: web
     name: media-resolver
     runtime: docker
@@ -9,14 +21,9 @@ services:
     plan: free
     healthCheckPath: /health
     envVars:
-      # Signs tunnel tokens so /t can't be used as an open proxy. Auto-generated.
       - key: RESOLVER_SECRET
         generateValue: true
-      # Optional: require callers to send `Authorization: Api-Key <value>`.
-      # If you set this, also set COBALT_API_KEY to the same value on the app
-      # (`wrangler secret put COBALT_API_KEY`).
       - key: RESOLVER_API_KEY
         sync: false
-      # Optional: cookies.txt contents for links behind a login / anti-bot check.
       - key: RESOLVER_COOKIES
         sync: false
