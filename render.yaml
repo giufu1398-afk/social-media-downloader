@@ -4,7 +4,7 @@ services:
     name: socialdownloader
     runtime: node
     plan: free
-    buildCommand: corepack enable && corepack prepare pnpm@11.5.3 --activate && pnpm install --frozen-lockfile && pnpm run build
+    buildCommand: npm install -g pnpm@11.5.3 && pnpm install --frozen-lockfile && pnpm run build
     startCommand: pnpm start
     healthCheckPath: /
     envVars:
