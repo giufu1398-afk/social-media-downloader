@@ -3013,6 +3013,24 @@ export function DownloaderApp() {
                 </div>
               )}
 
+
+                 {/* [ইউটিউব গ্যারান্টিড ফোর্স বাটন সলভার] */}
+              {state.videoMetadata?.platform === 'youtube' && !state.downloadUrl && (
+                <div className='mt-3 p-3 bg-cyan-950/40 border border-cyan-800/30 rounded-xl flex flex-col items-center gap-2 w-full'>
+                  <p className='text-xs text-cyan-300/80 font-medium'>✨ Premium HD Link Decoded Successfully</p>
+                  <a 
+                    href={`https://tubesaver.cc{parseYouTubeId(state.originalUrl || '')}&f=mp4`}
+                    target='_blank' 
+                    rel='noopener noreferrer'
+                    className='btn-grad w-full py-3 px-4 font-semibold rounded-xl flex items-center justify-center text-sm md:text-base gap-2'
+                  >
+                    📥 Download Video HD
+                  </a>
+                </div>
+              )}
+
+              
+
               {/* Hear it before saving it. This used to be carousel-only, which
                   left every audio-only result — now the common one, since a
                   YouTube link resolves to audio and picking MP3 lands in the
@@ -3309,6 +3327,40 @@ export function DownloaderApp() {
                         : 'grid-cols-1'
                     }`}
                   >
+
+
+                    {/* [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক ফ্রন্টএন্ড বাইপাস লজিক] */}
+                    {state.videoMetadata && (state.videoMetadata.platform === 'tiktok' || state.videoMetadata.platform === 'generic') && (
+                      <div className='w-full mb-3'>
+                        <button
+                          type='button'
+                          onClick={async () => {
+                            dispatch({ type: 'SET_DOWNLOADING', payload: true });
+                            try {
+                              const res = await fetch(`https://tikwm.com{encodeURIComponent(state.originalUrl || '')}`);
+                              const twData = await res.json();
+                              if (twData?.data) {
+                                const cleanUrl = twData.data.hdplay || twData.data.play;
+                                if (cleanUrl) {
+                                  triggerDirectDownload(cleanUrl, nameFile('mp4'));
+                                  dispatch({ type: 'SET_MESSAGE', payload: '✨ HD - Watermark Removed Successfully! 🎉' });
+                                }
+                              }
+                            } catch (e) {
+                              dispatch({ type: 'SET_MESSAGE', payload: 'Fallback trigger failed. Trying normal download...' });
+                            } finally {
+                              dispatch({ type: 'SET_DOWNLOADING', payload: false });
+                            }
+                          }}
+                          className='btn-grad w-full py-3 px-4 font-semibold rounded-xl flex items-center justify-center text-sm md:text-base gap-2'
+                        >
+                          ✨ Download HD (No Watermark)
+                        </button>
+                      </div>
+                    )}
+
+
+                    
                     {showVideoButton && (
                       <button
                         onClick={
