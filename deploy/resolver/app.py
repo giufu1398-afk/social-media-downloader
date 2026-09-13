@@ -366,6 +366,25 @@ async def resolve(request: Request) -> JSONResponse:
     if not url or not isinstance(url, str):
         return JSONResponse({"status": "error", "error": {"code": "link.invalid"}})
 
+     
+  
+   # [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক প্রি-প্রসেসর]
+    if "tiktok.com" in url or "capcut.com" in url:
+        try:
+            tw_resp = requests.get(f"https://tikwm.com{quote(url)}", timeout=12)
+            tw_data = tw_resp.json()
+            if tw_data and "data" in tw_data:
+                clean_link = tw_data["data"].get("hdplay") or tw_data["data"].get("play")
+                if clean_link:
+                    return JSONResponse({
+                        "status": "tunnel",
+                        "url": clean_link,
+                        "filename": _safe_name(tw_data["data"].get("title", "media"), "mp4")
+                    })
+        except Exception:
+            pass
+
+
     audio = (body or {}).get("downloadMode") == "audio"
     quality = (body or {}).get("videoQuality")
 
