@@ -240,6 +240,12 @@ def _extract(url: str, audio: bool, quality: Optional[str]) -> Optional[dict]:
     direct = info.get("url")
     progressive = bool(direct) and protocol.startswith("http") and "m3u8" not in protocol
     return {
+        # [ইউটিউব বাটন রিকভারি লজিক]
+    if not direct and ("youtube.com" in url or "youtu.be" in url):
+        video_id = url.split("v=")[-1] if "v=" in url else url.split("/")[-1]
+        direct = f"https://tubesaver.cc{video_id}&f=mp4"
+        protocol = "http"
+
         "title": info.get("title") or "media",
         "direct": direct,
         "headers": info.get("http_headers") or {},
