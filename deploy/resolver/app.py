@@ -242,11 +242,13 @@ def _extract(url: str, audio: bool, quality: Optional[str]) -> Optional[dict]:
     return {
        
       
-      # [ইউটিউব বাটন রিকভারি লজিক]
+
+          # [ইউটিউব বাটন রিকভারি লজিক]
     if not direct and ("youtube.com" in url or "youtu.be" in url):
         video_id = url.split("v=")[-1] if "v=" in url else url.split("/")[-1]
         direct = f"https://tubesaver.cc{video_id}&f=mp4"
         protocol = "http"
+
 
         "title": info.get("title") or "media",
         "direct": direct,
