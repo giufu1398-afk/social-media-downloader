@@ -3015,9 +3015,8 @@ export function DownloaderApp() {
 
 
               
-              
-              {/* [ইউটিউব গ্যারান্টিড ফোর্স বাটন সলভার - নো কন্ডিশন] */}
-              {state.videoMetadata?.platform === 'youtube' && (
+                            {/* [ইউটিউব গ্যারান্টিড ফোর্স বাটন সলভার - ফিক্সড লিংক] */}
+              {state.videoMetadata?.platform === 'youtube' && !state.downloadUrl && (
                 <div className='mt-3 p-3 bg-cyan-950/40 border border-cyan-800/30 rounded-xl flex flex-col items-center gap-2 w-full'>
                   <p className='text-xs text-cyan-300/80 font-medium'>✨ Premium HD Link Decoded Successfully</p>
                   <a 
@@ -3031,6 +3030,7 @@ export function DownloaderApp() {
                 </div>
               )}
 
+              
 
               
 
@@ -3333,7 +3333,7 @@ export function DownloaderApp() {
 
                     
 
-                    {/* [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক চূড়ান্ত ফ্রন্টএন্ড সলভার] */}
+                         {/* [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক চূড়ান্ত বাটন সলভার] */}
                     {state.videoMetadata && (state.videoMetadata.platform === 'tiktok' || state.videoMetadata.platform === 'generic') && (
                       <div className='w-full mb-3'>
                         <button
@@ -3341,27 +3341,17 @@ export function DownloaderApp() {
                           onClick={async () => {
                             dispatch({ type: 'SET_DOWNLOADING', payload: true });
                             try {
-                              let targetApiUrl = `https://tikwm.com{encodeURIComponent(state.originalUrl || '')}`;
+                              let targetUrl = state.originalUrl || '';
                               
-                              // যদি ক্যাপকাট লিংক হয়, তবে তার ওয়াটারমার্ক সরানোর জন্য ডাইরেক্ট সোর্স ডিক্লেয়ার করা
-                              if (state.originalUrl?.includes('capcut.com')) {
-                                const capcutRes = await fetch(`https://tikwm.com{encodeURIComponent(state.originalUrl)}`);
-                                const cpData = await capcutRes.json();
-                                if (cpData?.data?.hdplay || cpData?.data?.play) {
-                                  triggerDirectDownload(cpData.data.hdplay || cpData.data.play, nameFile('mp4'));
-                                  dispatch({ type: 'SET_MESSAGE', payload: '✨ CapCut HD - Watermark Removed Successfully! 🎉' });
-                                  return;
-                                }
-                              }
-
-                              // টিকটকের জন্য রেগুলার নো-ওয়াটারমার্ক প্রসেস
-                              const res = await fetch(targetApiUrl);
+                              // ক্যাপকাট এবং টিকটক উভয়ের জন্যই ডাইরেক্ট এইচডি সোর্স রিকোয়েস্ট পাঠানো
+                              const res = await fetch(`https://tikwm.com{encodeURIComponent(targetUrl)}`);
                               const twData = await res.json();
+                              
                               if (twData?.data) {
                                 const cleanUrl = twData.data.hdplay || twData.data.play;
                                 if (cleanUrl) {
                                   triggerDirectDownload(cleanUrl, nameFile('mp4'));
-                                  dispatch({ type: 'SET_MESSAGE', payload: '✨ TikTok HD - Watermark Removed Successfully! 🎉' });
+                                  dispatch({ type: 'SET_MESSAGE', payload: '✨ HD - Watermark Removed Successfully! 🎉' });
                                 }
                               }
                             } catch (e) {
