@@ -2054,13 +2054,13 @@ export class Downloader {
 
     // [ইউটিউব বাটন রিকভারি গেটওয়ে - টাইপস্ক্রিপ্ট ফিক্স]
     if (videoId) {
-      return {
-        title: 'YouTube Video',
-        url: `https://tubesaver.cc{videoId}&f=mp4`,
-        downloadUrl: `https://tubesaver.cc{videoId}&f=mp4`,
-        audioUrl: `https://tubesaver.cc{videoId}&f=mp3`
-      };
-    }
+      if (videoId) {
+  return {
+    title: "YouTube Video",
+    url: "https://tubesaver.cc" + videoId + "&f=mp4",
+    downloadUrl: "https://tubesaver.cc" + videoId + "&f=mp4"
+  };
+}
 
 
     
