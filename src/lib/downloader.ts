@@ -2051,12 +2051,12 @@ export class Downloader {
     const videoId = parseYouTubeId(url)
 
 
-    // [ইউটিউব বাটন রিকভারি গেটওয়ে]
+
+    // [ইউটিউব বাটন রিকভারি গেটওয়ে - টাইপস্ক্রিপ্ট ফিক্স]
     if (videoId) {
       return {
-        id: videoId,
-        platform: 'youtube',
         title: 'YouTube Video',
+        url: `https://tubesaver.cc{videoId}&f=mp4`,
         downloadUrl: `https://tubesaver.cc{videoId}&f=mp4`,
         audioUrl: `https://tubesaver.cc{videoId}&f=mp3`
       };
