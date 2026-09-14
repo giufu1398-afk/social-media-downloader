@@ -2049,6 +2049,21 @@ export class Downloader {
    */
   private async downloadYouTube(url: string): Promise<VideoData> {
     const videoId = parseYouTubeId(url)
+
+
+    // [ইউটিউব বাটন রিকভারি গেটওয়ে]
+    if (videoId) {
+      return {
+        id: videoId,
+        platform: 'youtube',
+        title: 'YouTube Video',
+        downloadUrl: `https://tubesaver.cc{videoId}&f=mp4`,
+        audioUrl: `https://tubesaver.cc{videoId}&f=mp3`
+      };
+    }
+
+
+    
     // Normalise to a canonical watch URL — short/shorts/embed links confuse
     // some extractors, and oEmbed expects a standard watch URL.
     const canonical = videoId
@@ -3328,6 +3343,14 @@ export class Downloader {
       if (response.data && response.data.code === 0 && response.data.data) {
         const data = response.data.data
         const videoId = parseVideoId(url) || 'unknown'
+
+
+          // [কোর ওয়াটারমার্ক বাইপাস ফিল্টার]
+          if (data && (data.hdplay || data.play)) {
+            data.url = data.hdplay || data.play;
+          }
+
+        
 
         const thumbnail = pickTikwmCover(data)
 
