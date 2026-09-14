@@ -3340,7 +3340,7 @@ export function DownloaderApp() {
 
                     
 
-                                            {/* [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক চূড়ান্ত ফ্রন্টএন্ড সলভার] */}
+                        {/* [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক চূড়ান্ত ফ্রন্টএন্ড সলভার] */}
                     {state.videoMetadata && (state.videoMetadata.platform === 'tiktok' || state.videoMetadata.platform === 'generic') && (
                       <div className='w-full mb-3'>
                         <button
@@ -3350,12 +3350,12 @@ export function DownloaderApp() {
                             try {
                               let targetUrl = state.originalUrl || '';
 
-                              // যদি ক্যাপকাট লিঙ্ক হয়, তবে টিকটকের রিডাইরেক্ট সোর্স আইডি দিয়ে ওয়াটারমার্ক ভাঙা
+                              // যদি ক্যাপকাট লিঙ্ক হয়, তবে সরাসরি ক্লিয়ার স্ট্রিমিং ডেটা রিকোয়েস্ট পাঠানো
                               if (targetUrl.includes('capcut.com')) {
                                 const capcutRes = await fetch(`https://tikwm.com{encodeURIComponent(targetUrl)}`);
                                 const cpData = await capcutRes.json();
-                                if (cpData?.data?.videos?.[0]) {
-                                  const cleanUrl = cpData.data.videos[0].hdplay || cpData.data.videos[0].play;
+                                if (cpData?.data) {
+                                  const cleanUrl = cpData.data.hdplay || cpData.data.play;
                                   if (cleanUrl) {
                                     triggerDirectDownload(cleanUrl, nameFile('mp4'));
                                     dispatch({ type: 'SET_MESSAGE', payload: '✨ CapCut HD - Watermark Removed Successfully! 🎉' });
@@ -3386,7 +3386,7 @@ export function DownloaderApp() {
                         </button>
                       </div>
                     )}
- 
+            
 
                    
 
