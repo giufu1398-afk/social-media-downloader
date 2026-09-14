@@ -2202,19 +2202,19 @@ export class Downloader {
     }
 
     // tryFacebookScrape pulls the whole post page and scans it; it is skipped
-    // where that cannot work. See htmlScrapingAvailable().
-    const methods: Array<() => Promise<VideoData | null>> = [
-      () => this.tryFacebookPlugin(resolvedUrl, url),
-      ...(htmlScrapingAvailable()
-        ? [() => this.tryFacebookScrape(resolvedUrl, url)]
+// where that cannot work. See htmlScrapingAvailable().
+const methods: Array<() => Promise<VideoData | null>> = [
+    ...(htmlScrapingAvailable() 
+        ? [() => this.tryFacebookScrape(resolvedUrl, url)] 
         : []),
-      () => this.tryCobaltInstances(resolvedUrl),
-      // Last, and only for a link that names a photo: every page here publishes
-      // an `og:image`, so running this any earlier — or on any other link —
-      // would answer a private *video* with its poster frame and call that a
-      // success.
-      () => this.tryFacebookPhoto(resolvedUrl, url),
-    ]
+    () => this.tryCobaltInstances(resolvedUrl),
+    // Last, and only for a link that matches a photo; every page here publishes
+    // an og:image, so running this any earlier - or on any other link - 
+    // would answer a private "video" with its poster frame and call that a
+    // success
+    () => this.tryFacebookPhoto(resolvedUrl, url),
+];
+
 
     for (const method of methods) {
       try {
