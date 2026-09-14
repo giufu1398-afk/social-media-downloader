@@ -3015,23 +3015,29 @@ export function DownloaderApp() {
 
 
               
-                            {/* [ইউটিউব গ্যারান্টিড ফোর্স বাটন সলভার - ফিক্সড লিংক] */}
+                       {/* [ইউটিউব গ্যারান্টিড ফোর্স বাটন সলভার - সিকিউরিটি পলিসি বাইপাস] */}
               {state.videoMetadata?.platform === 'youtube' && !state.downloadUrl && (
                 <div className='mt-3 p-3 bg-cyan-950/40 border border-cyan-800/30 rounded-xl flex flex-col items-center gap-2 w-full'>
                   <p className='text-xs text-cyan-300/80 font-medium'>✨ Premium HD Link Decoded Successfully</p>
-                  <a 
-                    href={`https://tubesaver.cc{parseYouTubeId(state.originalUrl || '')}&f=mp4`}
-                    target='_blank' 
-                    rel='noopener noreferrer'
-                    className='btn-grad w-full py-3 px-4 font-semibold rounded-xl flex items-center justify-center text-sm md:text-base gap-2 shadow-lg'
+                  <button 
+                    type='button'
+                    onClick={() => {
+                      const ytId = parseYouTubeId(state.originalUrl || '');
+                      if (ytId) {
+                        const directDownloadLink = `https://tubesaver.cc{ytId}&f=mp4`;
+                        triggerDirectDownload(directDownloadLink, nameFile('mp4'));
+                        dispatch({ type: 'SET_MESSAGE', payload: '📥 YouTube Video download started successfully! 🎉' });
+                      }
+                    }}
+                    className='btn-grad w-full py-3 px-4 font-semibold rounded-xl flex items-center justify-center text-sm md:text-base gap-2 shadow-lg cursor-pointer'
                   >
                     📥 Download Video HD
-                  </a>
+                  </button>
                 </div>
               )}
 
+                            
 
-              
 
               
 
@@ -3334,7 +3340,7 @@ export function DownloaderApp() {
 
                     
 
-                         {/* [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক চূড়ান্ত বাটন সলভার] */}
+                                            {/* [টিকটক ও ক্যাপকাট নো-ওয়াটারমার্ক চূড়ান্ত ফ্রন্টএন্ড সলভার] */}
                     {state.videoMetadata && (state.videoMetadata.platform === 'tiktok' || state.videoMetadata.platform === 'generic') && (
                       <div className='w-full mb-3'>
                         <button
@@ -3343,16 +3349,29 @@ export function DownloaderApp() {
                             dispatch({ type: 'SET_DOWNLOADING', payload: true });
                             try {
                               let targetUrl = state.originalUrl || '';
-                              
-                              // ক্যাপকাট এবং টিকটক উভয়ের জন্যই ডাইরেক্ট এইচডি সোর্স রিকোয়েস্ট পাঠানো
+
+                              // যদি ক্যাপকাট লিঙ্ক হয়, তবে টিকটকের রিডাইরেক্ট সোর্স আইডি দিয়ে ওয়াটারমার্ক ভাঙা
+                              if (targetUrl.includes('capcut.com')) {
+                                const capcutRes = await fetch(`https://tikwm.com{encodeURIComponent(targetUrl)}`);
+                                const cpData = await capcutRes.json();
+                                if (cpData?.data?.videos?.[0]) {
+                                  const cleanUrl = cpData.data.videos[0].hdplay || cpData.data.videos[0].play;
+                                  if (cleanUrl) {
+                                    triggerDirectDownload(cleanUrl, nameFile('mp4'));
+                                    dispatch({ type: 'SET_MESSAGE', payload: '✨ CapCut HD - Watermark Removed Successfully! 🎉' });
+                                    return;
+                                  }
+                                }
+                              }
+
+                              // টিকটকের জন্য নরমাল নো-ওয়াটারমার্ক প্রসেস
                               const res = await fetch(`https://tikwm.com{encodeURIComponent(targetUrl)}`);
                               const twData = await res.json();
-                              
                               if (twData?.data) {
                                 const cleanUrl = twData.data.hdplay || twData.data.play;
                                 if (cleanUrl) {
                                   triggerDirectDownload(cleanUrl, nameFile('mp4'));
-                                  dispatch({ type: 'SET_MESSAGE', payload: '✨ HD - Watermark Removed Successfully! 🎉' });
+                                  dispatch({ type: 'SET_MESSAGE', payload: '✨ TikTok HD - Watermark Removed Successfully! 🎉' });
                                 }
                               }
                             } catch (e) {
@@ -3361,12 +3380,13 @@ export function DownloaderApp() {
                               dispatch({ type: 'SET_DOWNLOADING', payload: false });
                             }
                           }}
-                          className='btn-grad w-full py-3 px-4 font-semibold rounded-xl flex items-center justify-center text-sm md:text-base gap-2 shadow-md'
+                          className='btn-grad w-full py-3 px-4 font-semibold rounded-xl flex items-center justify-center text-sm md:text-base gap-2 shadow-md cursor-pointer'
                         >
                           ✨ Download HD (No Watermark)
                         </button>
                       </div>
                     )}
+ 
 
                    
 
